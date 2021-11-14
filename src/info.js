@@ -5,7 +5,7 @@
 }(this, function () {
     'use strict';
 
-    var version = '1.0.0';
+    var version = '1.2.0';
     function info() {
         return { version: version };
     }
@@ -176,13 +176,58 @@
         };
     }
 
-    // TODO  坐标下方法
-    // 返回 浏览器左边框到左边屏幕 和 浏览器的上边界到屏幕最顶端
+    // 返回 文档/页面 水平方向滚动的像素值 和 垂直方向已滚动的像素值 
+    function pageOffset() {
+        return {
+            x: window.pageXOffset || (document.documentElement || document.body.parentNode || document.body).scrollLeft,
+            y: window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop
+        };
+    }
+    // 返回 浏览器 窗口的内部宽度 和 窗口的视口的高度
+    function inner() {
+        return {
+            width: window.innerWidth || (document.documentElement || document.body.parentNode || document.body).clientWidth,
+            height: window.innerHeight || (document.documentElement || document.body.parentNode || document.body).clientHeight
+        };
+    }
+
+    // 返回 浏览器左边框到左边屏幕 和 浏览器的上边界到屏幕最顶端 和 浏览器窗口的外部高度 和 浏览器窗口的外部宽度
     function coordinate() {
         return {
+            width: window.outerWidth || 'IE8及以下不支持',
+            height: window.outerHeight || 'IE8及以下不支持',
             top: screenTop || screenY,
-            left: screenLeft || screenX,
-        }
+            left: screenLeft || screenX
+        };
+    }
+
+    // 返回 距离父元素偏移值 父元素左上角 --> 本元素 左上角
+    function distance(el) {
+        return {
+            top: el.offsetTop,
+            left: el.offsetLeft
+        };
+    }
+    // 返回 元素滚动条到元素左边的距离 和 元素滚动条到元素上边的距离
+    function scroll(el) {
+        return {
+            top: el.scrollTop,
+            left: el.scrollLeft
+        };
+    }
+
+    // 返回 id 和 class 和 可见宽高 和 滚动视图高度 和 滚动视图宽度
+    function element(el) {
+        return {
+            id: el.id,
+            classList: el.className,
+            clientWidth: el.clientWidth,
+            clientHeight: el.clientHeight,
+            scrollWidth: el.scrollWidth,
+            scrollHeight: el.scrollHeight,
+            offsetWidth: el.offsetWidth,
+            offsetHeight: el.offsetHeight
+        };
     }
 
     info.browser = info.prototype.browser = browser;
@@ -216,6 +261,12 @@
     info.resolution = info.prototype.resolution = resolution;
 
     info.coordinate = info.prototype.coordinate = coordinate;
+    coordinate.pageOffset = pageOffset;
+    coordinate.inner = inner;
+
+    info.element = info.prototype.element = element;
+    element.distance = distance;
+    element.scroll = scroll;
 
     info.prototype.version = version;
 
